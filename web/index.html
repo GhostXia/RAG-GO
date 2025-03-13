@@ -259,7 +259,8 @@
         // 加载文档列表
         async function loadDocuments() {
             const documentsContainer = document.getElementById('documents-container');
-            const documentList = document.getElementById('document-list');
+            const documentList = document.getElementById('document-list') || document.createElement('ul');
+            documentList.id = 'document-list';
             
             documentsContainer.innerHTML = '<div class="loading">加载中...</div>';
             
@@ -268,7 +269,7 @@
                 const documents = await response.json();
                 
                 if (response.ok) {
-                    if (documents.length === 0) {
+                    if (!documents || documents.length === 0) {
                         documentsContainer.innerHTML = '<p>没有上传的文档</p>';
                         return;
                     }

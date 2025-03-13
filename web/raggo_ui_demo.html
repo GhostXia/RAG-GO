@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG-GO 扩展UI演示</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0e0e0e;
+            --text-color: #f0f0f0;
+            --border-color: #444;
+            --accent-color: #7f5af0;
+            --drawer-bg: #1e1e1e;
+            --button-bg: #2e2e2e;
+            --button-hover: #3e3e3e;
+            --danger-color: #e74c3c;
+            --danger-hover: #c0392b;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #aaa;
+            margin: 0;
+        }
+        
+        .demo-section {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #121212;
+        }
+        
+        .demo-section h2 {
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        /* 设置面板样式 */
+        .inline-drawer {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .inline-drawer-header {
+            background-color: var(--drawer-bg);
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .inline-drawer-content {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            background-color: rgba(30, 30, 30, 0.5);
+        }
+        
+        .flex-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .flex1 {
+            flex: 1;
+        }
+        
+        .alignitemscenter {
+            align-items: center;
+        }
+        
+        .justifyCenter {
+            justify-content: center;
+        }
+        
+        .margin0 {
+            margin: 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .text_pole {
+            width: 100%;
+            padding: 8px;
+            background-color: #2a2a2a;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 3px;
+        }
+        
+        .menu_button {
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .menu_button:hover {
+            background-color: var(--button-hover);
+        }
+        
+        .menu_button i {
+            font-size: 14px;
+        }
+        
+        /* 文档管理对话框样式 */
+        .dialog {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: #1a1a1a;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .dialog-header {
+            background-color: var(--drawer-bg);
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dialog-content {
+            padding: 20px;
+        }
+        
+        .raggo_upload_section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        #raggo_document_list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        #raggo_document_list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        #raggo_document_list li:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .doc-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .doc-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .doc-type {
+            font-size: 0.8em;
+            color: #888;
+        }
+        
+        .delete-btn {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .delete-btn:hover {
+            background-color: var(--danger-hover);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        
+        /* 导航面板样式 */
+        .right_menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--drawer-bg);
+            width: 50px;
+        }
+        
+        .right_menu_button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--button-bg);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .right_menu_button:hover {
+            background-color: var(--button-hover);
+        }
+        
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .flex-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RAG-GO 扩展UI演示</h1>
+            <p>这是RAG-GO扩展在SillyTavern中的UI界面演示</p>
+        </div>
+        
+        <div class="demo-section">
+            <h2>设置面板</h2>
+            <div id="raggo_settings">
+                <div class="inline-drawer">
+                    <div class="inline-drawer-header">
+                        <div class="flex-container alignitemscenter margin0">
+                            <b>RAG-GO</b>
+                        </div>
+                        <div class="inline-drawer-icon">
+                            <i class="fa-solid fa-circle-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="inline-drawer-content">
+                        <div class="flex-container">
+                            <div class="flex1">
+                                <label>服务器地址</label>
+                                <input class="text_pole" type="text" id="raggo_base_url" placeholder="http://localhost:8080" value="http://localhost:8080">
+                            </div>
+                        </div>
+                        <div class="flex-container">
+                            <div class="flex1">
+                                <label>自动增强上下文</label>
+                                <input type="checkbox" id="raggo_auto_enhance" checked>
+                            </div>
+                            <div class="flex1">
+                                <label>结果数量限制</label>
+                                <input class="text_pole" type="number" id="raggo_result_limit" min="1" max="10" step="1" value="3">
+                            </div>
+                        </div>
+                        <div class="flex-container justifyCenter alignitemscenter">
+                            <button id="raggo_test_connection" class="menu_button">
+                                <i class="fa-solid fa-plug"></i>
+                                <span>测试连接</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>导航面板</h2>
+            <p>在SillyTavern右侧导航栏中的RAG-GO按钮：</p>
+            <div class="right_menu">
+                <div id="raggo_documents_button" class="right_menu_button" title="RAG-GO文档管理">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>文档管理对话框</h2>
+            <div id="raggo_documents_dialog" class="dialog">
+                <div class="dialog-header">
+                    <h3 style="margin: 0;">RAG-GO文档管理</h3>
+                </div>
+                <div class="dialog-content">
+                    <div class="raggo_upload_section">
+                        <h4>上传文档</h4>
+                        <div class="flex-container">
+                            <input type="text" id="raggo_doc_name" placeholder="文档名称" class="text_pole flex1">
+                            <select id="raggo_doc_type" class="text_pole" style="flex: 0 0 100px;">
+                                <option value="text">文本</option>
+                                <option value="webpage">网页</option>
+                                <option value="pdf">PDF</option>
+                            </select>
+                        </div>
+                        <textarea id="raggo_doc_content" placeholder="文档内容" class="text_pole" rows="5" style="margin-top: 10px;"></textarea>
+                        <div class="flex-container" style="margin-top: 10px;">
+                            <button id="raggo_upload_document" class="menu_button">上传文档</button>
+                        </div>
+                    </div>
+                    <div class="raggo_documents_list">
+                        <h4>文档列表</h4>
+                        <div id="raggo_documents_container">
+                            <ul id="raggo_document_list">
+                                <li data-id="1">
+                                    <div class="doc-info">
+                                        <span class="doc-name">项目说明文档</span>
+                                        <span class="doc-type">text</span>
+                                    </div>
+                                    <button class="delete-btn" data-id="1">删除</button>
+                                </li>
+                                <li data-id="2">
+                                    <div class="doc-info">
+                                        <span class="doc-name">API文档</span>
+                                        <span class="doc-type">webpage</span>
+                                    </div>
+                                    <button class="delete-btn" data-id="2">删除</button>
+                                </li>
+                                <li data-id="3">
+                                    <div class="doc-info">
+                                        <span class="doc-name">用户手册</span>
+                                        <span class="doc-type">pdf</span>
+                                    </div>
+                                    <button class="delete-btn" data-id="3">删除</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 简单的交互效果演示
+        document.querySelector('.inline-drawer-header').addEventListener('click', function() {
+            const content = document.querySelector('.inline-drawer-content');
+            const icon = document.querySelector('.inline-drawer-icon i');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.classList.remove('fa-circle-chevron-right');
+                icon.classList.add('fa-circle-chevron-down');
+            } else {
+                content.style.display = 'none';
+                icon.classList.remove('fa-circle-chevron-down');
+                icon.classList.add('fa-circle-chevron-right');
+            }
+        });
+        
+        // 按钮点击效果
+        document.getElementById('raggo_test_connection').addEventListener('click', function() {
+            alert('测试连接成功！');
+        });
+        
+        document.getElementById('raggo_upload_document').addEventListener('click', function() {
+            const name = document.getElementById('raggo_doc_name').value;
+            const content = document.getElementById('raggo_doc_

@@ -181,6 +181,11 @@ func (vs *VectorStore) GetVector(id string) ([]float32, error) {
 
 // SearchSimilar 搜索与查询向量最相似的文档
 func (vs *VectorStore) SearchSimilar(queryVector []float32, limit int) ([]Document, []float32, error) {
+	return vs.SearchSimilarWithFilter(queryVector, limit, nil)
+}
+
+// SearchSimilarWithFilter 搜索与查询向量最相似的文档，并应用过滤器
+func (vs *VectorStore) SearchSimilarWithFilter(queryVector []float32, limit int, filter func(Document) bool) ([]Document, []float32, error) {
 	vs.mutex.RLock()
 	defer vs.mutex.RUnlock()
 

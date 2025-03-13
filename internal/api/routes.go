@@ -16,7 +16,11 @@ import (
 )
 
 // RegisterRoutes 注册所有API路由
-func RegisterRoutes(router *gin.Engine, embeddingModel *model.EmbeddingModel, vectorStore *storage.VectorStore) {
+func RegisterRoutes(router *gin.Engine, embeddingModel *model.EmbeddingModel, vectorStore *storage.VectorStore, chatStore *storage.ChatStore) {
+	// 注册聊天相关路由
+	RegisterChatRoutes(router, embeddingModel, vectorStore)
+	// 注册角色聊天相关路由
+	RegisterCharacterChatRoutes(router, embeddingModel, vectorStore, chatStore)
 	// 静态文件服务
 	router.Static("/static", "./web/static")
 

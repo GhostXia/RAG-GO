@@ -1,0 +1,64 @@
+/* RAG-GO扩展样式 */
+#raggo_documents_dialog {
+    padding: 20px;
+}
+
+.raggo_upload_section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #444;
+}
+
+#raggo_document_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#raggo_document_list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+#raggo_document_list li:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.doc-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.doc-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.doc-type {
+    font-size: 0.8em;
+    color: #888;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    width: auto;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #7f8c8d;
+}
