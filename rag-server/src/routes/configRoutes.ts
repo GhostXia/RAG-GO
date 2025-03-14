@@ -13,5 +13,6 @@ router.get('/', configController.getConfig);
 router.put('/', configController.updateConfig);
 router.post('/save', configController.saveConfigToEnv);
 router.get('/status', configController.getSystemStatus);
+router.get('/models', configController.getModels);
 
 export default router;

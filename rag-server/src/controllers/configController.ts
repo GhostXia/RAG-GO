@@ -7,9 +7,12 @@ import { Request, Response } from 'express';
 import { Config } from '../utils/config';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ModelManager } from '../services/modelManager';
 
 // 获取配置实例
 const config = Config.getInstance();
+// 获取模型管理器实例
+const modelManager = ModelManager.getInstance();
 
 export const configController = {
   /**
@@ -152,6 +155,26 @@ export const configController = {
     } catch (error: any) {
       console.error('获取系统状态失败:', error);
       res.status(500).json({ error: `获取系统状态失败: ${error.message}` });
+    }
+  },
+  
+  /**
+   * 获取可用的本地ONNX模型列表
+   */
+  getModels(req: Request, res: Response): void {
+    try {
+      // 获取模型列表
+      modelManager.getAvailableModels().then(models => {
+        res.status(200).json({
+          success: true,
+          models: models
+        });
+      }).catch(error => {
+        throw error;
+      });
+    } catch (error: any) {
+      console.error('获取模型列表失败:', error);
+      res.status(500).json({ error: `获取模型列表失败: ${error.message}` });
     }
   }
 };
